@@ -1,0 +1,49 @@
+Sub loop_through_all_worksheets()
+
+Dim ws As Worksheet
+Dim starting_ws As Worksheet
+Set starting_ws = ActiveSheet
+
+For Each ws In ThisWorkbook.Worksheets
+    ws.Activate
+
+' Stock_Data
+' set variable for holding ticker symbol
+Dim Ticker_Symbol As String
+
+' set variable for holding total amount of volume for each stock
+Dim Total_Stock As Double
+Total_Stock = 0
+
+' keep track of location for each ticker symbol in summary data table
+Dim Summary_Data_Table As Integer
+Summary_Data_Table = 2
+
+' final row on each sheet
+Dim LastRow As Long
+LastRow = ActiveSheet.Cells(Rows.Count, "A").End(xlUp).Row
+
+' look through all stock volumes
+    For i = 2 To LastRow
+
+' check if within same ticker symbol
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+            Ticker_Symbol = Cells(i, 1).Value
+        Total_Stock = Total_Stock + Cells(i, 7).Value
+
+' print ticker sysmbol in summary data table
+            Range("I" & Summary_Data_Table).Value = Ticker_Symbol
+            Range("J" & Summary_Data_Table).Value = Total_Stock
+    
+            Summary_Data_Table = Summary_Data_Table + 1
+            Total_Stock = 0
+
+' if cell following a row is the same ticker..
+    Else
+            Total_Stock = Total_Stock + Cells(i, 7).Value
+    End If
+    Next i
+Next
+starting_ws.Activate
+
+End Sub
